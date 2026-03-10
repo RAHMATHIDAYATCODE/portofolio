@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
 <head>
@@ -123,6 +124,11 @@
             transform: translateY(0);
             opacity: 1;
         }
+
+        /* Profile Image Interactive State */
+        .profile-colored {
+            filter: grayscale(0) !important;
+        }
     </style>
 </head>
 <body class="selection:bg-blue-500/30">
@@ -200,13 +206,13 @@
                     <span id="typewriter-text"></span><span class="cursor">|</span>
                 </h1>
                 <p class="text-slate-400 text-lg leading-relaxed max-w-xl data-lang" data-id="hero-desc">
-                    HALO, SAYA RAHMAT HIDAYAT. SAYA MEMBANTU SAYA MENGUBAH IDE KOMPLEKS MENJADI PENGALAMAN DI DUNIA MODERN DIGITAISASI YANG SEDERHANA DAN LUAR BIASA.
+                    HALO, SAYA RAHMAT HIDAYAT. SAYA MEMBANTU MENGUBAH IDE KOMPLEKS MENJADI PENGALAMAN DI DUNIA MODERN DIGITAISASI YANG SEDERHANA DAN LUAR BIASA.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 pt-4">
                     <button onclick="document.getElementById('work').scrollIntoView()" class="px-10 py-4 bg-white text-black rounded-full font-bold hover:scale-105 transition-all shadow-xl flex items-center justify-center gap-2 group data-lang" data-id="hero-btn-1">
                         Portofolio Saya <i data-lucide="arrow-down" class="w-5 h-5 group-hover:translate-y-1 transition-transform"></i>
                     </button>
-                    <button onclick="document.getElementById('contact').scrollIntoView()" class="px-10 py-4 border border-slate-700 rounded-full font-bold hover:bg-slate-800 hover:border-slate-500 transition-all text-white data-lang" data-id="hero-btn-2">
+                    <button onclick="document.getElementById('contact').scrollIntoView()" class="px-10 py-4 border border-slate-700 rounded-full font-bold hover:bg-slate-800 hover:border-slate-500 transition-all data-lang" data-id="hero-btn-2">
                         Ayo Mulai!
                     </button>
                 </div>
@@ -214,11 +220,11 @@
 
             <div class="relative flex justify-center items-center" data-aos="fade-left" data-aos-duration="1200">
                 <div class="absolute w-64 h-64 bg-blue-600/30 blur-[80px] rounded-full profile-anim"></div>
-                <div class="relative w-64 h-80 md:w-80 md:h-[450px] glass rounded-[3rem] overflow-hidden border-2 border-white/10 profile-anim shadow-2xl">
-                    <img src="image.jpeg" alt="Foto Profil" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 pointer-events-none">
+                <div class="relative w-64 h-80 md:w-80 md:h-[450px] glass rounded-[3rem] overflow-hidden border-2 border-white/10 profile-anim shadow-2xl cursor-pointer" onclick="toggleProfileColor()">
+                    <img id="profile-img" src="image.jpeg" alt="Foto Profil" class="w-full h-full object-cover grayscale transition-all duration-700 pointer-events-none">
                     <div class="absolute bottom-6 left-6 right-6 p-4 glass rounded-2xl border border-white/5 backdrop-blur-md">
                         <p class="text-xs font-bold uppercase tracking-widest text-blue-400 data-lang" data-id="hero-job-label">PEKERJAAN</p>
-                        <p class="text-sm font-medium text-white">WEB DEVELOPER</p>
+                        <p class="text-sm font-medium">WEB DEVELOPER</p>
                     </div>
                 </div>
                 <div class="absolute -top-4 -right-4 p-4 glass rounded-full shadow-xl profile-anim" style="animation-delay: -2s;">
@@ -314,6 +320,7 @@
             </div>
 
             <div class="grid md:grid-cols-2 gap-8 md:gap-12">
+                <!-- Project 1 -->
                 <div class="group relative overflow-hidden rounded-[3rem] glass aspect-square cursor-pointer" data-aos="zoom-in-up" onclick="openProject('mobile')">
                     <div class="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/10 transition-all duration-700 z-10"></div>
                     <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-12 z-20">
@@ -328,6 +335,7 @@
                     </div>
                 </div>
 
+                <!-- Project 2 -->
                 <div class="group relative overflow-hidden rounded-[3rem] glass aspect-square cursor-pointer" data-aos="zoom-in-up" data-aos-delay="200" onclick="openProject('ecommerce')">
                     <div class="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/10 transition-all duration-700 z-10"></div>
                     <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-12 z-20">
@@ -345,20 +353,20 @@
         </div>
     </section>
 
-    <!-- Modal Project -->
+    <!-- Modal Project (Dinamis) -->
     <div id="project-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-slate-950/90 backdrop-blur-md opacity-0 invisible pointer-events-none transition-all duration-300">
         <div class="modal-content-anim glass max-w-2xl w-full rounded-[3rem] p-8 md:p-16 relative border border-white/10 shadow-2xl">
-            <button onclick="closeProject()" class="absolute top-6 right-6 md:top-8 md:right-8 text-slate-400 hover:text-white bg-white/5 p-2 rounded-full">
+            <button onclick="closeProject()" class="absolute top-6 right-6 md:top-8 md:right-8 text-slate-400 hover:text-white bg-white/5 p-2 rounded-full transition-colors">
                 <i data-lucide="x" class="w-6 h-6"></i>
             </button>
             <div class="space-y-6">
                 <span id="modal-category" class="text-blue-400 font-bold uppercase tracking-[0.2em] text-xs">KATEGORI</span>
                 <h2 id="modal-title" class="text-3xl md:text-6xl font-bold tracking-tight italic">JUDUL PROYEK</h2>
-                <div class="w-16 h-1 bg-blue-500 rounded-full"></div>
+                <div id="modal-accent" class="w-16 h-1 bg-blue-500 rounded-full"></div>
                 <p id="modal-description" class="text-slate-400 text-base md:text-lg leading-relaxed">Deskripsi...</p>
                 <div class="pt-4 md:pt-8">
-                    <a id="modal-link" href="#" target="_blank" class="inline-flex items-center gap-3 px-8 md:px-10 py-4 md:py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-xl">
-                        Buka Live Preview <i data-lucide="external-link" class="w-5 h-5"></i>
+                    <a id="modal-link" href="#" target="_blank" class="inline-flex items-center gap-3 px-8 md:px-10 py-4 md:py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-xl active:scale-95 transition-all">
+                        <span id="modal-link-text">Buka Live Preview</span> <i data-lucide="external-link" class="w-5 h-5"></i>
                     </a>
                 </div>
             </div>
@@ -378,9 +386,9 @@
                     <i data-lucide="send" class="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform"></i>
                 </a>
             </div>
-            <div class="flex justify-center gap-8 md:gap-10 mt-16 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all">
-                <a href="https://www.tiktok.com/@rh_officialz?_r=1&_t=ZS-94YH23jdQcj"><i data-lucide="music-2" class="w-8 h-8"></i></a>
-                <a href="https://www.instagram.com/rh_officialz_?igsh=MWhjdW1hZ2JubXN4OA=="><i data-lucide="instagram" class="w-8 h-8"></i></a>
+            <div class="flex justify-center gap-8 md:gap-10 mt-16 opacity-50 hover:opacity-100 transition-all">
+                <a href="https://www.tiktok.com/@rh_officialz?_r=1&_t=ZS-94YH23jdQcj" class="hover:text-blue-400 transition-colors"><i data-lucide="music-2" class="w-8 h-8"></i></a>
+                <a href="https://www.instagram.com/rh_officialz_?igsh=MWhjdW1hZ2JubXN4OA==" class="hover:text-pink-500 transition-colors"><i data-lucide="instagram" class="w-8 h-8"></i></a>
             </div>
         </div>
     </section>
@@ -394,6 +402,41 @@
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
+        const projectData = {
+            mobile: {
+                id: {
+                    category: 'Aplikasi Mobile',
+                    title: 'Server App',
+                    desc: 'Sebuah solusi infrastruktur mobile untuk manajemen server jarak jauh yang aman, cepat, dan memiliki antarmuka yang intuitif bagi sysadmin.',
+                    linkText: 'Lihat Demo'
+                },
+                en: {
+                    category: 'Mobile Application',
+                    title: 'Server App',
+                    desc: 'A mobile infrastructure solution for secure, fast remote server management with an intuitive interface for sysadmins.',
+                    linkText: 'View Demo'
+                },
+                color: '#3b82f6',
+                url: 'https://github.com/'
+            },
+            ecommerce: {
+                id: {
+                    category: 'Website E-Commerce',
+                    title: 'People Market',
+                    desc: 'Platform pasar digital modern yang menghubungkan UMKM lokal dengan pelanggan secara langsung, dengan sistem pembayaran terintegrasi.',
+                    linkText: 'Kunjungi Situs'
+                },
+                en: {
+                    category: 'E-Commerce Website',
+                    title: 'People Market',
+                    desc: 'A modern digital marketplace platform connecting local MSMEs directly with customers, featuring integrated payment systems.',
+                    linkText: 'Visit Site'
+                },
+                color: '#a855f7',
+                url: 'https://github.com/'
+            }
+        };
+
         const translations = {
             id: {
                 'nav-home': 'Beranda', 'nav-about': 'Tentang', 'nav-work': 'Karya', 'nav-contact': 'Kontak', 'nav-btn': 'Hubungi saya',
@@ -439,18 +482,14 @@
                 const id = el.getAttribute('data-id');
                 if (translations[lang][id]) el.innerText = translations[lang][id];
             });
-            
-            // UI Updates for Language Buttons
             const updateBtn = (id, active) => {
                 const btn = document.getElementById(id);
                 if(btn) btn.style.fontWeight = active ? 'bold' : 'normal';
             };
-            
             updateBtn('btn-id-desktop', lang === 'id');
             updateBtn('btn-en-desktop', lang === 'en');
             updateBtn('btn-id-mobile', lang === 'id');
             updateBtn('btn-en-mobile', lang === 'en');
-
             clearTimeout(typewriterTimeout);
             typingIdx = 0; charIdx = 0; isDeleting = false;
             type();
@@ -460,7 +499,6 @@
         function type() {
             const currentTexts = translations[currentLang].typewriter;
             const fullText = currentTexts[typingIdx];
-            
             if (isDeleting) {
                 typewriterEl.textContent = fullText.substring(0, charIdx - 1);
                 charIdx--;
@@ -468,9 +506,7 @@
                 typewriterEl.textContent = fullText.substring(0, charIdx + 1);
                 charIdx++;
             }
-
             let typeSpeed = isDeleting ? 50 : 150;
-
             if (!isDeleting && charIdx === fullText.length) {
                 isDeleting = true;
                 typeSpeed = 2000;
@@ -479,7 +515,6 @@
                 typingIdx = (typingIdx + 1) % currentTexts.length;
                 typeSpeed = 500;
             }
-
             typewriterTimeout = setTimeout(type, typeSpeed);
         }
 
@@ -498,7 +533,6 @@
             const menu = document.getElementById('mobile-menu');
             const icon = document.getElementById('menu-icon');
             const isActive = menu.classList.toggle('active');
-            
             if (isActive) {
                 menu.classList.remove('pointer-events-none');
                 menu.style.opacity = '1';
@@ -509,6 +543,12 @@
                 icon.setAttribute('data-lucide', 'menu');
             }
             lucide.createIcons();
+        }
+
+        // New function for Image color toggle
+        function toggleProfileColor() {
+            const img = document.getElementById('profile-img');
+            img.classList.toggle('profile-colored');
         }
 
         AOS.init({ duration: 1000, once: false });
@@ -523,16 +563,36 @@
             });
         });
 
-        function openProject(id) {
-            document.getElementById('project-modal').classList.add('modal-active');
+        function openProject(projectId) {
+            const modal = document.getElementById('project-modal');
+            const project = projectData[projectId];
+            if (!project) return;
+            const content = project[currentLang];
+            document.getElementById('modal-category').innerText = content.category;
+            document.getElementById('modal-title').innerText = content.title;
+            document.getElementById('modal-description').innerText = content.desc;
+            document.getElementById('modal-link-text').innerText = content.linkText;
+            document.getElementById('modal-link').href = project.url;
+            const accent = document.getElementById('modal-accent');
+            accent.style.backgroundColor = project.color;
+            const linkBtn = document.getElementById('modal-link');
+            linkBtn.style.backgroundColor = project.color;
+            modal.classList.add('modal-active');
             document.body.style.overflow = 'hidden';
+            lucide.createIcons();
         }
+
         function closeProject() {
             document.getElementById('project-modal').classList.remove('modal-active');
             document.body.style.overflow = 'auto';
         }
 
+        document.getElementById('project-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'project-modal') closeProject();
+        });
+
         document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>
 </html>
+

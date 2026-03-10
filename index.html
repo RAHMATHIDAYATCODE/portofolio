@@ -13,49 +13,52 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .light-mode {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --border-color: rgba(15, 23, 42, 0.1);
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             overflow-x: hidden;
-            /* Mencegah seleksi teks di seluruh halaman */
             user-select: none; 
             -webkit-user-select: none;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
+
         .glass {
-            background: rgba(30, 41, 59, 0.7);
+            background: var(--glass-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
         }
+
         .text-gradient {
             background: linear-gradient(to right, #60a5fa, #a855f7, #ec4899);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         .card-hover {
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
         .card-hover:hover {
             transform: translateY(-15px) scale(1.03);
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3);
             border-color: rgba(96, 165, 250, 0.6);
         }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
-        /* Mouse Orb Effect */
+
         #cursor-orb {
             position: fixed;
             width: 500px;
@@ -67,7 +70,7 @@
             transform: translate(-50%, -50%);
             transition: transform 0.1s ease-out;
         }
-        /* Floating Animation for Image */
+
         @keyframes profile-float {
             0% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(2deg); }
@@ -76,118 +79,226 @@
         .profile-anim {
             animation: profile-float 6s ease-in-out infinite;
         }
+
+        .modal-active {
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+        }
+        .modal-content-anim {
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal-active .modal-content-anim {
+            transform: scale(1) translateY(0);
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            background-color: #60a5fa;
+            margin-left: 4px;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .tech-icon {
+            filter: grayscale(1);
+            transition: all 0.3s ease;
+        }
+        .tech-icon:hover {
+            filter: grayscale(0);
+            transform: scale(1.2);
+        }
+
+        /* Mobile Menu Transitions */
+        #mobile-menu {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            transform: translateY(-120%);
+        }
+        #mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="selection:bg-blue-500/30">
 
-    <!-- Background Decoration -->
     <div id="cursor-orb"></div>
 
     <!-- Header / Navbar -->
-    <nav class="fixed top-0 left-0 right-0 z-50 flex justify-center p-6 transition-all duration-500" id="main-nav">
-        <div class="glass flex items-center justify-between w-full max-w-5xl px-8 py-4 rounded-2xl shadow-2xl">
-            <div class="text-xl font-bold tracking-tighter text-gradient uppercase">RAHMAT HIDAYAT</div>
-            <div class="hidden md:flex space-x-8 text-sm font-medium">
-                <a href="#home" class="hover:text-blue-400 transition-all hover:tracking-widest">Beranda</a>
-                <a href="#about" class="hover:text-blue-400 transition-all hover:tracking-widest">Tentang</a>
-                <a href="#work" class="hover:text-blue-400 transition-all hover:tracking-widest">Karya</a>
-                <a href="#contact" class="hover:text-blue-400 transition-all hover:tracking-widest">Kontak</a>
+    <nav class="fixed top-0 left-0 right-0 z-[60] flex justify-center p-4 md:p-6 transition-all duration-500" id="main-nav">
+        <div class="glass flex items-center justify-between w-full max-w-6xl px-6 py-4 rounded-2xl shadow-2xl">
+            <div class="text-lg md:text-xl font-bold tracking-tighter text-gradient uppercase">RAHMAT HIDAYAT</div>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                <a href="#home" class="hover:text-blue-400 transition-all data-lang" data-id="nav-home">Beranda</a>
+                <a href="#about" class="hover:text-blue-400 transition-all data-lang" data-id="nav-about">Tentang</a>
+                <a href="#work" class="hover:text-blue-400 transition-all data-lang" data-id="nav-work">Karya</a>
+                <a href="#contact" class="hover:text-blue-400 transition-all data-lang" data-id="nav-contact">Kontak</a>
+                
+                <div class="flex items-center gap-2 border-l border-white/10 pl-4">
+                    <button onclick="changeLang('id')" class="hover:text-blue-400 transition-all text-xs font-bold" id="btn-id-desktop">ID</button>
+                    <span class="text-slate-600">/</span>
+                    <button onclick="changeLang('en')" class="hover:text-blue-400 transition-all text-xs" id="btn-en-desktop">EN</button>
+                </div>
+
+                <button onclick="toggleTheme()" class="p-2 bg-slate-800/50 rounded-full hover:bg-slate-700 transition-all">
+                    <i data-lucide="moon" id="theme-icon-desktop" class="w-4 h-4"></i>
+                </button>
             </div>
-            <a href="#contact" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-semibold transition-all shadow-lg shadow-blue-600/30 active:scale-90">
+
+            <!-- Mobile Actions -->
+            <div class="flex items-center gap-4 md:hidden">
+                <button onclick="toggleMobileMenu()" class="p-2 glass rounded-lg">
+                    <i data-lucide="menu" id="menu-icon"></i>
+                </button>
+            </div>
+
+            <a href="#contact" class="hidden sm:block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-semibold transition-all shadow-lg shadow-blue-600/30 active:scale-90 data-lang" data-id="nav-btn">
                 Hubungi saya
             </a>
         </div>
     </nav>
 
+    <!-- Mobile Navigation Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-[55] glass flex flex-col items-center justify-center space-y-8 md:hidden opacity-0 pointer-events-none">
+        <div class="flex flex-col items-center space-y-6 text-xl font-bold italic">
+            <a href="#home" onclick="toggleMobileMenu()" class="hover:text-blue-400 data-lang" data-id="nav-home">Beranda</a>
+            <a href="#about" onclick="toggleMobileMenu()" class="hover:text-blue-400 data-lang" data-id="nav-about">Tentang</a>
+            <a href="#work" onclick="toggleMobileMenu()" class="hover:text-blue-400 data-lang" data-id="nav-work">Karya</a>
+            <a href="#contact" onclick="toggleMobileMenu()" class="hover:text-blue-400 data-lang" data-id="nav-contact">Kontak</a>
+        </div>
+        <div class="flex items-center gap-8 py-6 border-y border-white/10 w-full justify-center">
+            <div class="flex gap-4 items-center">
+                <button onclick="changeLang('id')" class="text-lg font-bold" id="btn-id-mobile">ID</button>
+                <span class="text-slate-600">/</span>
+                <button onclick="changeLang('en')" class="text-lg" id="btn-en-mobile">EN</button>
+            </div>
+            <button onclick="toggleTheme()" class="p-4 bg-blue-600/20 rounded-full">
+                <i data-lucide="moon" id="theme-icon-mobile" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <button onclick="toggleMobileMenu()" class="text-slate-400">
+            <i data-lucide="x" class="w-10 h-10"></i>
+        </button>
+    </div>
+
     <!-- Hero Section -->
     <section id="home" class="min-h-screen flex flex-col justify-center items-center px-6 pt-32 pb-20 relative">
         <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             
-            <!-- Teks Hero -->
             <div class="text-left space-y-6" data-aos="fade-right" data-aos-duration="1200">
-                <span class="inline-block px-4 py-2 rounded-full border border-slate-700 text-slate-400 text-xs tracking-widest uppercase mb-4 backdrop-blur-sm bg-slate-800/30">
+                <span class="inline-block px-4 py-2 rounded-full border border-slate-700 text-slate-400 text-xs tracking-widest uppercase mb-4 backdrop-blur-sm bg-slate-800/30 data-lang" data-id="hero-badge">
                     CREATIVE DEVELOPER, DESIGNER & ADMINISTRATOR STAFF
                 </span>
-                <h1 class="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
-                    BELAJAR ADALAH<span class="text-gradient"> KUNCI</span>
-                    KEBEBASAN
+                <h1 class="text-4xl md:text-7xl font-bold tracking-tight leading-tight min-h-[140px] md:min-h-[180px]">
+                    <span id="typewriter-text"></span><span class="cursor">|</span>
                 </h1>
-                <p class="text-slate-400 text-lg leading-relaxed max-w-xl">
-                    HALO, SAYA RAHMAT HIDAYAT. SAYA MEMBANTU MENGUBAH IDE KOMPLEKS MENJADI PENGALAMAN DI DUNIA MODERN DIGITAISASI YANG SEDERHANA DAN LUAR BIASA.
+                <p class="text-slate-400 text-lg leading-relaxed max-w-xl data-lang" data-id="hero-desc">
+                    HALO, SAYA RAHMAT HIDAYAT. SAYA MEMBANTU SAYA MENGUBAH IDE KOMPLEKS MENJADI PENGALAMAN DI DUNIA MODERN DIGITAISASI YANG SEDERHANA DAN LUAR BIASA.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                    <button onclick="document.getElementById('work').scrollIntoView()" class="px-10 py-4 bg-white text-black rounded-full font-bold hover:scale-105 transition-all shadow-xl flex items-center justify-center gap-2 group">
+                    <button onclick="document.getElementById('work').scrollIntoView()" class="px-10 py-4 bg-white text-black rounded-full font-bold hover:scale-105 transition-all shadow-xl flex items-center justify-center gap-2 group data-lang" data-id="hero-btn-1">
                         Portofolio Saya <i data-lucide="arrow-down" class="w-5 h-5 group-hover:translate-y-1 transition-transform"></i>
                     </button>
-                    <button onclick="document.getElementById('contact').scrollIntoView()" class="px-10 py-4 border border-slate-700 rounded-full font-bold hover:bg-slate-800 hover:border-slate-500 transition-all text-white">
+                    <button onclick="document.getElementById('contact').scrollIntoView()" class="px-10 py-4 border border-slate-700 rounded-full font-bold hover:bg-slate-800 hover:border-slate-500 transition-all text-white data-lang" data-id="hero-btn-2">
                         Ayo Mulai!
                     </button>
                 </div>
             </div>
 
-            <!-- Foto Orang (Hero Image) -->
             <div class="relative flex justify-center items-center" data-aos="fade-left" data-aos-duration="1200">
-                <!-- Background Glow -->
-                <div class="absolute w-72 h-72 bg-blue-600/30 blur-[100px] rounded-full profile-anim"></div>
-                
-                <!-- Frame Foto -->
-                <div class="relative w-72 h-96 md:w-80 md:h-[450px] glass rounded-[3rem] overflow-hidden border-2 border-white/10 profile-anim shadow-2xl">
-                    <img src="image.jpeg" 
-                         alt="Foto Profil" 
-                         class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 pointer-events-none">
-                    
-                    <!-- Overlay Glass Info -->
+                <div class="absolute w-64 h-64 bg-blue-600/30 blur-[80px] rounded-full profile-anim"></div>
+                <div class="relative w-64 h-80 md:w-80 md:h-[450px] glass rounded-[3rem] overflow-hidden border-2 border-white/10 profile-anim shadow-2xl">
+                    <img src="image.jpeg" alt="Foto Profil" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700 pointer-events-none">
                     <div class="absolute bottom-6 left-6 right-6 p-4 glass rounded-2xl border border-white/5 backdrop-blur-md">
-                        <p class="text-xs font-bold uppercase tracking-widest text-blue-400">PEKERJAAN</p>
+                        <p class="text-xs font-bold uppercase tracking-widest text-blue-400 data-lang" data-id="hero-job-label">PEKERJAAN</p>
                         <p class="text-sm font-medium text-white">WEB DEVELOPER</p>
                     </div>
                 </div>
-
-                <!-- Floating Badge -->
                 <div class="absolute -top-4 -right-4 p-4 glass rounded-full shadow-xl profile-anim" style="animation-delay: -2s;">
                     <i data-lucide="award" class="text-yellow-500 w-8 h-8"></i>
                 </div>
             </div>
+        </div>
+    </section>
 
+    <!-- Skills Section -->
+    <section class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-8 md:gap-12">
+                <div class="glass p-8 md:p-10 rounded-[3rem] space-y-8" data-aos="fade-up">
+                    <h3 class="text-2xl font-bold italic data-lang" data-id="skill-tech-title">KEAHLIAN TEKNOLOGI</h3>
+                    <div class="flex flex-wrap gap-6 md:gap-8 justify-center items-center">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" class="w-12 h-12 md:w-16 md:h-16 tech-icon" title="HTML5" alt="HTML">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" class="w-12 h-12 md:w-16 md:h-16 tech-icon" title="CSS3" alt="CSS">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" class="w-12 h-12 md:w-16 md:h-16 tech-icon" title="JavaScript" alt="JS">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" class="w-12 h-12 md:w-16 md:h-16 tech-icon" title="PHP" alt="PHP">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" class="w-12 h-12 md:w-16 md:h-16 tech-icon" title="MySQL SQL" alt="SQL">
+                    </div>
+                </div>
+                <div class="glass p-8 md:p-10 rounded-[3rem] space-y-8" data-aos="fade-up" data-aos-delay="200">
+                    <h3 class="text-2xl font-bold italic data-lang" data-id="skill-lang-title">BAHASA YANG DIKUASAI</h3>
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm font-bold uppercase tracking-widest">
+                                <span>Indonesia</span>
+                                <span>Native</span>
+                            </div>
+                            <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-blue-500 w-full"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm font-bold uppercase tracking-widest">
+                                <span>English</span>
+                                <span>Professional Working</span>
+                            </div>
+                            <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-purple-500 w-[75%]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- About Section -->
-    <section id="about" class="py-40 px-6 relative">
+    <section id="about" class="py-24 md:py-40 px-6 relative">
         <div class="max-w-6xl mx-auto">
-            <div class="grid md:grid-cols-2 gap-20 items-center">
-                <div class="space-y-6" data-aos="fade-right" data-aos-mirror="true">
-                    <h2 class="text-4xl md:text-6xl font-bold leading-tight italic">Tentang <br><span class="text-blue-400">Filosofi</span> Desain</h2>
-                    <p class="text-slate-400 leading-relaxed text-lg">
+            <div class="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+                <div class="space-y-6" data-aos="fade-right">
+                    <h2 class="text-4xl md:text-6xl font-bold leading-tight italic data-lang" data-id="about-title">Tentang <br><span class="text-blue-400">Filosofi</span> Desain</h2>
+                    <p class="text-slate-400 leading-relaxed text-lg data-lang" data-id="about-desc">
                         BAGI SAYA, DESIGN DAN SYSTEM BUKAN HANYA TENTANG ESTETIKA, TAPI TENTANG BAGAIMANA SEBUAH FUNGSI BEKERJA DENGAN BAIK DAN BERMANFAAT BAGI PENGGUNA.
                     </p>
-                    <div class="grid grid-cols-2 gap-6 pt-6">
-                        <div class="p-8 glass rounded-3xl" data-aos="flip-left" data-aos-delay="100">
-                            <h3 class="font-bold text-4xl text-white">1+</h3>
-                            <p class="text-xs text-slate-500 uppercase tracking-widest mt-2">Tahun Berkarya</p>
+                    <div class="grid grid-cols-2 gap-4 md:gap-6 pt-6">
+                        <div class="p-6 md:p-8 glass rounded-3xl" data-aos="flip-left">
+                            <h3 class="font-bold text-3xl md:text-4xl">1+</h3>
+                            <p class="text-[10px] md:text-xs text-slate-500 uppercase tracking-widest mt-2 data-lang" data-id="stat-1">Tahun Berkarya</p>
                         </div>
-                        <div class="p-8 glass rounded-3xl" data-aos="flip-right" data-aos-delay="200">
-                            <h3 class="font-bold text-4xl text-white">1+</h3>
-                            <p class="text-xs text-slate-500 uppercase tracking-widest mt-2">Pengalaman Bekerja</p>
+                        <div class="p-6 md:p-8 glass rounded-3xl" data-aos="flip-right">
+                            <h3 class="font-bold text-3xl md:text-4xl">1+</h3>
+                            <p class="text-[10px] md:text-xs text-slate-500 uppercase tracking-widest mt-2 data-lang" data-id="stat-2">Pengalaman Bekerja</p>
                         </div>
                     </div>
                 </div>
-                <div class="space-y-6" data-aos="fade-left" data-aos-mirror="true">
-                    <div class="p-8 glass rounded-[3rem] space-y-4 card-hover relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-100 transition-opacity">
-                            <i data-lucide="sparkles" class="w-12 h-12 text-blue-400"></i>
-                        </div>
+                <div class="space-y-6" data-aos="fade-left">
+                    <div class="p-8 glass rounded-[3rem] space-y-4 card-hover group">
                         <i data-lucide="layout" class="text-blue-400 w-12 h-12 mb-4"></i>
-                        <h4 class="font-bold text-2xl">Visual UI Design</h4>
-                        <p class="text-slate-500">Menciptakan antarmuka yang Modern, Bersih, dan Berstandar Internasional maupun Lokal.</p>
+                        <h4 class="font-bold text-2xl data-lang" data-id="service-1-title">Visual UI Design</h4>
+                        <p class="text-slate-500 data-lang" data-id="service-1-desc">Menciptakan antarmuka yang Modern, Bersih, dan Berstandar Internasional maupun Lokal.</p>
                     </div>
-                    <div class="p-8 glass rounded-[3rem] space-y-4 card-hover relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-100 transition-opacity">
-                            <i data-lucide="zap" class="w-12 h-12 text-purple-400"></i>
-                        </div>
+                    <div class="p-8 glass rounded-[3rem] space-y-4 card-hover group">
                         <i data-lucide="code-2" class="text-purple-400 w-12 h-12 mb-4"></i>
-                        <h4 class="font-bold text-2xl">High-end Dev</h4>
-                        <p class="text-slate-500">Membangun Aplikasi Web dengan performa Baik dan Terstruktur kode yang rapi.</p>
+                        <h4 class="font-bold text-2xl data-lang" data-id="service-2-title">High-end Dev</h4>
+                        <p class="text-slate-500 data-lang" data-id="service-2-desc">Membangun Aplikasi Web dengan performa Baik dan Terstruktur kode yang rapi.</p>
                     </div>
                 </div>
             </div>
@@ -195,106 +306,215 @@
     </section>
 
     <!-- Work Section -->
-    <section id="work" class="py-40 px-6 bg-slate-900/20">
+    <section id="work" class="py-24 md:py-40 px-6 bg-slate-900/20">
         <div class="max-w-6xl mx-auto space-y-20">
             <div class="text-center space-y-4" data-aos="fade-up">
-                <h2 class="text-5xl md:text-7xl font-bold italic">PORTOFOLIO</h2>
+                <h2 class="text-5xl md:text-7xl font-bold italic data-lang" data-id="work-title">PORTOFOLIO</h2>
                 <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-12">
-                <!-- Proyek 1 -->
-                <div class="group relative overflow-hidden rounded-[3rem] glass aspect-square cursor-pointer" data-aos="zoom-in-up" data-aos-mirror="true">
+            <div class="grid md:grid-cols-2 gap-8 md:gap-12">
+                <div class="group relative overflow-hidden rounded-[3rem] glass aspect-square cursor-pointer" data-aos="zoom-in-up" onclick="openProject('mobile')">
                     <div class="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/10 transition-all duration-700 z-10"></div>
-                    <div class="absolute inset-0 flex flex-col justify-end p-12 z-20">
+                    <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-12 z-20">
                         <div class="transform translate-y-8 group-hover:translate-y-0 transition-transform duration-500">
-                            <span class="text-blue-400 font-bold uppercase tracking-[0.2em] text-xs">Aplikasi Mobile</span>
-                            <h3 class="text-4xl font-bold mt-2">Server App</h3>
+                            <span class="text-blue-400 font-bold uppercase tracking-[0.2em] text-xs data-lang" data-id="p1-cat">Aplikasi Mobile</span>
+                            <h3 class="text-3xl md:text-4xl font-bold mt-2">Server App</h3>
                             <div class="h-1 w-0 group-hover:w-full bg-blue-500 mt-4 transition-all duration-700 rounded-full"></div>
                         </div>
                     </div>
                     <div class="w-full h-full bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-all duration-1000">
-                        <i data-lucide="smartphone" class="w-24 h-24 text-slate-700 opacity-20 group-hover:opacity-100 transition-all"></i>
+                        <i data-lucide="smartphone" class="w-20 h-20 md:w-24 md:h-24 text-slate-700 opacity-20 group-hover:opacity-100"></i>
                     </div>
                 </div>
 
-                <!-- Proyek 2 -->
-                <div class="group relative overflow-hidden rounded-[3rem] glass aspect-square cursor-pointer" data-aos="zoom-in-up" data-aos-mirror="true" data-aos-delay="200">
+                <div class="group relative overflow-hidden rounded-[3rem] glass aspect-square cursor-pointer" data-aos="zoom-in-up" data-aos-delay="200" onclick="openProject('ecommerce')">
                     <div class="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/10 transition-all duration-700 z-10"></div>
-                    <div class="absolute inset-0 flex flex-col justify-end p-12 z-20">
+                    <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-12 z-20">
                         <div class="transform translate-y-8 group-hover:translate-y-0 transition-transform duration-500">
-                            <span class="text-purple-400 font-bold uppercase tracking-[0.2em] text-xs">Website E-Commerce</span>
-                            <h3 class="text-4xl font-bold mt-2">People Market</h3>
+                            <span class="text-purple-400 font-bold uppercase tracking-[0.2em] text-xs data-lang" data-id="p2-cat">Website E-Commerce</span>
+                            <h3 class="text-3xl md:text-4xl font-bold mt-2">People Market</h3>
                             <div class="h-1 w-0 group-hover:w-full bg-purple-500 mt-4 transition-all duration-700 rounded-full"></div>
                         </div>
                     </div>
                     <div class="w-full h-full bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-all duration-1000">
-                        <i data-lucide="shopping-bag" class="w-24 h-24 text-slate-700 opacity-20 group-hover:opacity-100 transition-all"></i>
+                        <i data-lucide="shopping-bag" class="w-20 h-20 md:w-24 md:h-24 text-slate-700 opacity-20 group-hover:opacity-100"></i>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- Modal Project -->
+    <div id="project-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-slate-950/90 backdrop-blur-md opacity-0 invisible pointer-events-none transition-all duration-300">
+        <div class="modal-content-anim glass max-w-2xl w-full rounded-[3rem] p-8 md:p-16 relative border border-white/10 shadow-2xl">
+            <button onclick="closeProject()" class="absolute top-6 right-6 md:top-8 md:right-8 text-slate-400 hover:text-white bg-white/5 p-2 rounded-full">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="space-y-6">
+                <span id="modal-category" class="text-blue-400 font-bold uppercase tracking-[0.2em] text-xs">KATEGORI</span>
+                <h2 id="modal-title" class="text-3xl md:text-6xl font-bold tracking-tight italic">JUDUL PROYEK</h2>
+                <div class="w-16 h-1 bg-blue-500 rounded-full"></div>
+                <p id="modal-description" class="text-slate-400 text-base md:text-lg leading-relaxed">Deskripsi...</p>
+                <div class="pt-4 md:pt-8">
+                    <a id="modal-link" href="#" target="_blank" class="inline-flex items-center gap-3 px-8 md:px-10 py-4 md:py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-xl">
+                        Buka Live Preview <i data-lucide="external-link" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Contact Section -->
-    <section id="contact" class="py-40 px-6">
-        <div class="max-w-4xl mx-auto glass rounded-[4rem] p-16 md:p-24 text-center space-y-12 shadow-[0_0_100px_rgba(37,99,235,0.1)]" data-aos="fade-up" data-aos-mirror="true">
-            <h2 class="text-5xl md:text-8xl font-bold tracking-tighter leading-none italic">Ada <span class="text-gradient">Ide Bisnis?</span></h2>
-            <p class="text-slate-400 max-w-lg mx-auto text-xl">
+    <section id="contact" class="py-24 md:py-40 px-6">
+        <div class="max-w-4xl mx-auto glass rounded-[3rem] md:rounded-[4rem] p-10 md:p-16 text-center space-y-12 shadow-2xl" data-aos="fade-up">
+            <h2 class="text-4xl md:text-8xl font-bold italic data-lang" data-id="contact-title">Ada <span class="text-gradient">Ide Bisnis?</span></h2>
+            <p class="text-slate-400 text-lg md:text-xl data-lang" data-id="contact-desc">
                 Saya selalu siap untuk tantangan baru. Klik tombol di bawah untuk mengirim pesan langsung ke inbox saya.
             </p>
-            <div class="pt-10">
-                <a href="mailto:rahmathidayat23726@kamu.com" class="group relative inline-flex items-center justify-center px-12 py-6 font-bold text-white transition-all duration-200 bg-blue-600 rounded-full hover:bg-blue-700 hover:shadow-2xl hover:shadow-blue-600/50 active:scale-95">
+            <div class="pt-4">
+                <a href="mailto:rahmathidayat23726@gmail.com" class="group relative inline-flex items-center px-8 md:px-12 py-4 md:py-6 font-bold text-white bg-blue-600 rounded-full hover:bg-blue-700 transition-all shadow-xl shadow-blue-600/50 data-lang" data-id="contact-btn">
                     Kirim Email Sekarang
-                    <i data-lucide="send" class="ml-3 w-6 h-6 group-hover:translate-x-2 group-hover:-translate-y-1 transition-transform"></i>
+                    <i data-lucide="send" class="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform"></i>
                 </a>
             </div>
-            <div class="flex justify-center gap-10 mt-16 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all">
+            <div class="flex justify-center gap-8 md:gap-10 mt-16 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all">
                 <a href="https://www.tiktok.com/@rh_officialz?_r=1&_t=ZS-94YH23jdQcj"><i data-lucide="music-2" class="w-8 h-8"></i></a>
-                <a href="#"><i data-lucide="linkedin" class="w-8 h-8"></i></a>
-                <a href="#"><i data-lucide="twitter" class="w-8 h-8"></i></a>
                 <a href="https://www.instagram.com/rh_officialz_?igsh=MWhjdW1hZ2JubXN4OA=="><i data-lucide="instagram" class="w-8 h-8"></i></a>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-20 text-center border-t border-slate-800/50">
-        <p class="text-slate-500 font-medium tracking-widest text-xs uppercase">Copyright Reserved
+    <footer class="py-16 md:py-20 text-center border-t border-slate-800/50">
+        <p class="text-slate-500 font-medium tracking-widest text-[10px] md:text-xs uppercase data-lang" data-id="footer">Copyright Reserved
             &copy; 2026 RAHMAT HIDAYAT • PORTOFOLIO.
         </p>
     </footer>
 
-    <!-- Scripts -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // --- 1. KEAMANAN DASAR (Anti-Copy) ---
-        // Mematikan klik kanan
-        document.addEventListener('contextmenu', event => event.preventDefault());
-
-        // Mematikan shortcut (F12, Ctrl+Shift+I, Ctrl+U)
-        document.onkeydown = function(e) {
-            if (e.keyCode == 123) { return false; } // F12
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; } // Inspect
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; } // Inspect
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) { return false; } // Console
-            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; } // View Source
+        const translations = {
+            id: {
+                'nav-home': 'Beranda', 'nav-about': 'Tentang', 'nav-work': 'Karya', 'nav-contact': 'Kontak', 'nav-btn': 'Hubungi saya',
+                'hero-badge': 'CREATIVE DEVELOPER, DESIGNER & ADMINISTRATOR STAFF',
+                'hero-desc': 'HALO, SAYA RAHMAT HIDAYAT. SAYA MEMBANTU MENGUBAH IDE KOMPLEKS MENJADI PENGALAMAN DI DUNIA MODERN DIGITAISASI YANG SEDERHANA DAN LUAR BIASA.',
+                'hero-btn-1': 'Portofolio Saya', 'hero-btn-2': 'Ayo Mulai!', 'hero-job-label': 'PEKERJAAN',
+                'skill-tech-title': 'KEAHLIAN TEKNOLOGI', 'skill-lang-title': 'BAHASA YANG DIKUASAI',
+                'about-title': 'Tentang Filosofi Desain', 'about-desc': 'BAGI SAYA, DESIGN DAN SYSTEM BUKAN HANYA TENTANG ESTETIKA, TAPI TENTANG BAGAIMANA SEBUAH FUNGSI BEKERJA DENGAN BAIK DAN BERMANFAAT BAGI PENGGUNA.',
+                'stat-1': 'Tahun Berkarya', 'stat-2': 'Pengalaman Bekerja',
+                'service-1-title': 'Visual UI Design', 'service-1-desc': 'Menciptakan antarmuka yang Modern, Bersih, dan Berstandar Internasional maupun Lokal.',
+                'service-2-title': 'High-end Dev', 'service-2-desc': 'Membangun Aplikasi Web dengan performa Baik dan Terstruktur kode yang rapi.',
+                'work-title': 'PORTOFOLIO', 'p1-cat': 'Aplikasi Mobile', 'p2-cat': 'Website E-Commerce',
+                'contact-title': 'Ada Ide Bisnis?', 'contact-desc': 'Saya selalu siap untuk tantangan baru. Klik tombol di bawah untuk mengirim pesan langsung ke inbox saya.',
+                'contact-btn': 'Kirim Email Sekarang', 'footer': 'Copyright Reserved © 2026 RAHMAT HIDAYAT • PORTOFOLIO.',
+                'typewriter': ["BELAJAR ADALAH KUNCI KEBEBASAN", "KREATIFITAS TANPA BATAS", "SOLUSI DIGITAL MODERN"]
+            },
+            en: {
+                'nav-home': 'Home', 'nav-about': 'About', 'nav-work': 'Work', 'nav-contact': 'Contact', 'nav-btn': 'Contact Me',
+                'hero-badge': 'CREATIVE DEVELOPER, DESIGNER & ADMINISTRATOR STAFF',
+                'hero-desc': 'HELLO, I AM RAHMAT HIDAYAT. I HELP TRANSFORM COMPLEX IDEAS INTO SIMPLE AND EXTRAORDINARY EXPERIENCES IN THE MODERN DIGITAL WORLD.',
+                'hero-btn-1': 'My Portfolio', 'hero-btn-2': 'Let\'s Start!', 'hero-job-label': 'JOB ROLE',
+                'skill-tech-title': 'TECHNICAL SKILLS', 'skill-lang-title': 'LANGUAGE PROFICIENCY',
+                'about-title': 'About Design Philosophy', 'about-desc': 'TO ME, DESIGN AND SYSTEMS ARE NOT JUST ABOUT AESTHETICS, BUT ABOUT HOW A FUNCTION WORKS WELL AND BENEFITS THE USER.',
+                'stat-1': 'Years of Creation', 'stat-2': 'Work Experience',
+                'service-1-title': 'Visual UI Design', 'service-1-desc': 'Creating Interfaces that are Modern, Clean, and meeting International or Local standards.',
+                'service-2-title': 'High-end Dev', 'service-2-desc': 'Building Web Applications with Good performance and Well-structured clean code.',
+                'work-title': 'PORTFOLIO', 'p1-cat': 'Mobile Application', 'p2-cat': 'E-Commerce Website',
+                'contact-title': 'Have a Business Idea?', 'contact-desc': 'I am always ready for new challenges. Click the button below to send a message directly to my inbox.',
+                'contact-btn': 'Send Email Now', 'footer': 'Copyright Reserved © 2026 RAHMAT HIDAYAT • PORTFOLIO.',
+                'typewriter': ["LEARNING IS THE KEY TO FREEDOM", "LIMITLESS CREATIVITY", "MODERN DIGITAL SOLUTIONS"]
+            }
         };
 
-        // --- 2. LOGIKA ANIMASI & FITUR ---
-        // Inisialisasi AOS
-        AOS.init({
-            duration: 1000,
-            once: false,
-            mirror: true,
-            offset: 120,
-            easing: 'ease-out-back'
-        });
+        let currentLang = 'id';
+        let typingIdx = 0;
+        let charIdx = 0;
+        let isDeleting = false;
+        let typewriterTimeout;
 
-        // Lucide Icons
+        function changeLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.data-lang').forEach(el => {
+                const id = el.getAttribute('data-id');
+                if (translations[lang][id]) el.innerText = translations[lang][id];
+            });
+            
+            // UI Updates for Language Buttons
+            const updateBtn = (id, active) => {
+                const btn = document.getElementById(id);
+                if(btn) btn.style.fontWeight = active ? 'bold' : 'normal';
+            };
+            
+            updateBtn('btn-id-desktop', lang === 'id');
+            updateBtn('btn-en-desktop', lang === 'en');
+            updateBtn('btn-id-mobile', lang === 'id');
+            updateBtn('btn-en-mobile', lang === 'en');
+
+            clearTimeout(typewriterTimeout);
+            typingIdx = 0; charIdx = 0; isDeleting = false;
+            type();
+        }
+
+        const typewriterEl = document.getElementById('typewriter-text');
+        function type() {
+            const currentTexts = translations[currentLang].typewriter;
+            const fullText = currentTexts[typingIdx];
+            
+            if (isDeleting) {
+                typewriterEl.textContent = fullText.substring(0, charIdx - 1);
+                charIdx--;
+            } else {
+                typewriterEl.textContent = fullText.substring(0, charIdx + 1);
+                charIdx++;
+            }
+
+            let typeSpeed = isDeleting ? 50 : 150;
+
+            if (!isDeleting && charIdx === fullText.length) {
+                isDeleting = true;
+                typeSpeed = 2000;
+            } else if (isDeleting && charIdx === 0) {
+                isDeleting = false;
+                typingIdx = (typingIdx + 1) % currentTexts.length;
+                typeSpeed = 500;
+            }
+
+            typewriterTimeout = setTimeout(type, typeSpeed);
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            const icons = ['theme-icon-desktop', 'theme-icon-mobile'];
+            icons.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.setAttribute('data-lucide', isLight ? 'sun' : 'moon');
+            });
+            lucide.createIcons();
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            const isActive = menu.classList.toggle('active');
+            
+            if (isActive) {
+                menu.classList.remove('pointer-events-none');
+                menu.style.opacity = '1';
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                menu.classList.add('pointer-events-none');
+                menu.style.opacity = '0';
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            lucide.createIcons();
+        }
+
+        AOS.init({ duration: 1000, once: false });
         lucide.createIcons();
+        type();
 
-        // Mouse Orb Logic
         const orb = document.getElementById('cursor-orb');
         document.addEventListener('mousemove', (e) => {
             window.requestAnimationFrame(() => {
@@ -303,26 +523,16 @@
             });
         });
 
-        // Navbar Animation Logic
-        let lastScroll = 0;
-        const nav = document.getElementById('main-nav');
-        
-        window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset;
-            if (currentScroll > 50) {
-                nav.style.paddingTop = '1rem';
-                nav.style.paddingBottom = '0rem';
-            } else {
-                nav.style.paddingTop = '1.5rem';
-                nav.style.paddingBottom = '1.5rem';
-            }
-            if (currentScroll > lastScroll && currentScroll > 400) {
-                nav.style.transform = 'translateY(-150%)';
-            } else {
-                nav.style.transform = 'translateY(0)';
-            }
-            lastScroll = currentScroll;
-        });
+        function openProject(id) {
+            document.getElementById('project-modal').classList.add('modal-active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeProject() {
+            document.getElementById('project-modal').classList.remove('modal-active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>
 </html>

@@ -10,7 +10,6 @@
         :root {
             --primary-dark: #064e3b;
             --primary-light: #10b981;
-            --accent: #fbbf24;
         }
 
         body {
@@ -23,23 +22,8 @@
             align-items: center;
             justify-content: center;
             color: #f8fafc;
-        }
-
-        .bg-glow {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: var(--primary-light);
-            filter: blur(120px);
-            opacity: 0.2;
-            z-index: -1;
-            border-radius: 50%;
-            animation: move 10s infinite alternate;
-        }
-
-        @keyframes move {
-            from { transform: translate(-50%, -50%); }
-            to { transform: translate(50%, 50%); }
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .glass-card {
@@ -57,9 +41,7 @@
         }
 
         .hidden-section {
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
+            display: none !important;
         }
 
         .btn-gradient {
@@ -68,19 +50,20 @@
             padding: 16px;
             border-radius: 16px;
             font-weight: 700;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.4);
             cursor: pointer;
+            border: none;
+            width: 100%;
+            display: block;
+            transition: transform 0.2s;
         }
 
-        .btn-gradient:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 25px -5px rgba(5, 150, 105, 0.4);
+        .btn-gradient:active {
+            transform: scale(0.98);
         }
 
         .btn-claim {
             background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            color: white;
+            color: white !important;
             padding: 18px;
             border-radius: 16px;
             font-weight: 800;
@@ -88,6 +71,9 @@
             display: block;
             margin-top: 15px;
             font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            width: 100%;
             animation: pulse-glow 2s infinite;
         }
 
@@ -123,6 +109,8 @@
         #message-box {
             position: fixed;
             bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
             background: #1e293b;
             color: white;
             padding: 12px 24px;
@@ -135,8 +123,6 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <div class="bg-glow"></div>
-
     <!-- Tampilan 1: Welcome -->
     <div id="welcome-screen" class="glass-card">
         <div class="text-6xl mb-4">🌙</div>
@@ -145,46 +131,47 @@
         
         <div class="info-banner">
             <span class="text-xl">ℹ️</span>
-            <p>Pastikan aplikasi <b>DANA</b> sudah terinstal di perangkat Anda sebelum mengambil hadiah.</p>
+            <p>Klik tombol di bawah untuk memasukkan kode redeem THR kamu.</p>
         </div>
 
-        <button onclick="nextStep('welcome-screen', 'redeem-screen')" class="btn-gradient w-full text-lg">
+        <button onclick="goToRedeem()" class="btn-gradient text-lg">
             BUKA AMPLOP 🧧
         </button>
     </div>
 
-    <!-- Tampilan 2: Redeem -->
+    <!-- Tampilan 2: Input Kode -->
     <div id="redeem-screen" class="glass-card hidden-section">
         <h2 class="text-xl font-bold text-emerald-900 mb-6">Verifikasi Kode Redem</h2>
         
         <input type="text" id="redeem-input" placeholder="INPUT KODE REDEM" 
-               class="w-full bg-slate-100 border-2 border-transparent focus:border-emerald-500 rounded-2xl px-4 py-4 mb-4 outline-none text-center font-extrabold tracking-widest text-xl text-emerald-900 transition-all">
+               class="w-full bg-slate-100 border-2 border-transparent focus:border-emerald-500 rounded-2xl px-4 py-4 mb-4 outline-none text-center font-extrabold tracking-widest text-xl text-emerald-900 transition-all uppercase">
         
-        <button onclick="checkCode()" class="btn-gradient w-full mb-6">
+        <button onclick="processVerify()" class="btn-gradient mb-6">
             VERIFIKASI
         </button>
 
         <p class="text-xs text-slate-400 mb-2">Belum punya kode?</p>
-        <a id="wa-button" href="#" target="_blank" class="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-full font-bold text-sm transition-transform hover:scale-105 shadow-md">
-            MINTA KODE KE OWNER
-        </a>
+        <button onclick="contactOwner()" class="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-full font-bold text-sm border-none cursor-pointer">
+            Minta Kode ke Owner
+        </button>
     </div>
 
     <!-- Tampilan 3: Success -->
     <div id="qr-screen" class="glass-card hidden-section">
         <div class="text-4xl mb-2">🎊</div>
-        <h2 class="text-2xl font-extrabold text-emerald-900 mb-2">BERHASIL TERBUKA!</h2>
-        <p class="text-sm text-slate-500 mb-6">SILAHKAN AMBIL SALDO DANA ANDA DI BAWAH.</p>
+        <h2 class="text-2xl font-extrabold text-emerald-900 mb-2">Berhasil Terbuka!</h2>
+        <p class="text-sm text-slate-500 mb-6">Klik tombol di bawah untuk klaim di aplikasi DANA.</p>
         
         <div class="qr-wrapper">
             <img id="qr-image" src="" alt="QR" class="w-48 h-48 object-contain">
         </div>
 
-        <button id="claim-trigger" onclick="openDana()" class="btn-claim w-full">
-    BUKA APLIKASI DANA 💰
-</button>
+        <!-- Tombol ini memicu fungsi handleDanaClaim agar tidak error kendala -->
+        <button onclick="handleDanaClaim()" class="btn-claim">
+            BUKA APLIKASI DANA 💰
+        </button>
 
-        <button onclick="location.reload()" class="mt-8 text-slate-400 font-bold text-xs hover:text-emerald-600 transition-colors uppercase tracking-widest">
+        <button onclick="location.reload()" class="mt-8 text-slate-400 font-bold text-xs bg-transparent border-none cursor-pointer uppercase">
             Kembali
         </button>
     </div>
@@ -192,72 +179,75 @@
     <div id="message-box"></div>
 
     <script>
-        // Konfigurasi WhatsApp
+        // --- DATA KONFIGURASI ---
         const waNumber = "6287864905121";
-        const waMessage = encodeURIComponent("✨Assalamu'alaikum Owner😊, Selamat Idul Fitri..Maafin gua ya kalo ada salah..., Sehat dan Sukses ya.., Heheh boleh minta Kode Redem nya Abang Rahmat?✨🙏");
-        document.getElementById('wa-button').href = `https://wa.me/${waNumber}?text=${waMessage}`;
+        const waMessage = "✨Assalamu'alaikum Owner😊, Selamat Idul Fitri..Maafin gua ya kalo ada salah..., Heheh boleh minta Kode Redem nya Abang Rahmat?✨🙏";
 
+        // Daftar kode dan link dana kaget
         const redeemData = {
             "THR-7712": "https://link.dana.id/danakaget?c=sdlybfys5&r=eDUdTe&orderId=20260312101214255115010300166865668471322",
-            "THR-4590": "https://link.dana.id/kaget/contoh2",
-            "THR-1212": "https://link.dana.id/kaget/contoh3"
+            "THR-1212": "https://link.dana.id/danakaget?c=sdlybfys5&r=eDUdTe&orderId=20260312101214255115010300166865668471322"
         };
 
-        function nextStep(current, next) {
-            const currEl = document.getElementById(current);
-            const nextEl = document.getElementById(next);
-            
-            currEl.style.opacity = '0';
-            currEl.style.transform = 'translateY(-20px)';
-            
-            setTimeout(() => {
-                currEl.classList.add('hidden-section');
-                nextEl.classList.remove('hidden-section');
-                setTimeout(() => {
-                    nextEl.style.opacity = '1';
-                    nextEl.style.transform = 'translateY(0)';
-                }, 50);
-            }, 300);
+        let activeLink = "";
+
+        // --- FUNGSI NAVIGASI ---
+        function goToRedeem() {
+            document.getElementById('welcome-screen').classList.add('hidden-section');
+            document.getElementById('redeem-screen').classList.remove('hidden-section');
         }
 
-        function checkCode() {
-            const input = document.getElementById('redeem-input').value.trim().toUpperCase();
-            const qrImg = document.getElementById('qr-image');
-            const claimBtn = document.getElementById('claim-btn');
+        function contactOwner() {
+            window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`, '_blank');
+        }
+
+        // --- FUNGSI PROSES VERIFIKASI ---
+        function processVerify() {
+            const inputElement = document.getElementById('redeem-input');
+            const codeInput = inputElement.value.trim().toUpperCase();
             
-            if (redeemData[input]) {
-                const targetUrl = redeemData[input];
-                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=15&ecc=H&data=${encodeURIComponent(targetUrl)}`;
-                claimBtn.href = targetUrl;
-                nextStep('redeem-screen', 'qr-screen');
+            if (redeemData[codeInput]) {
+                activeLink = redeemData[codeInput];
+                
+                // Set Gambar QR
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(activeLink)}`;
+                document.getElementById('qr-image').src = qrUrl;
+                
+                // Pindah Layar ke Sukses
+                document.getElementById('redeem-screen').classList.add('hidden-section');
+                document.getElementById('qr-screen').classList.remove('hidden-section');
             } else {
-                showMessage("❌ Kode salah atau tidak aktif!");
+                showToast("❌ Kode salah atau tidak aktif!");
             }
         }
 
-        function showMessage(text) {
-            const box = document.getElementById('message-box');
-            box.innerText = text;
-            box.style.display = 'block';
-            setTimeout(() => box.style.display = 'none', 3000);
-        }
-
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.onkeydown = function(e) {
-            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) return false;
-        };
-                function openDana() {
-            if (currentDanaLink) {
-                // Mencoba membuka di tab baru terlebih dahulu
-                const newWindow = window.open(currentDanaLink, '_blank');
+        // --- FUNGSI KLAIM DANA ---
+        // Fungsi ini penting untuk melewati proteksi iFrame/Internal Browser
+        function handleDanaClaim() {
+            if (activeLink) {
+                // Membuka di tab baru (memaksa keluar dari sandbox/bingkai aplikasi)
+                const danaWin = window.open(activeLink, '_blank');
                 
-                // Jika browser memblokir popup, gunakan pengalihan lokasi langsung
-                if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                    window.location.href = currentDanaLink;
+                // Jika popup diblokir browser, gunakan pengalihan halaman langsung
+                if (!danaWin || danaWin.closed || typeof danaWin.closed == 'undefined') {
+                    window.location.href = activeLink;
                 }
             }
         }
 
+        function showToast(text) {
+            const toast = document.getElementById('message-box');
+            toast.innerText = text;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        // --- KEAMANAN ---
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.onkeydown = function(e) {
+            // Mencegah F12 dan Ctrl+Shift+I
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) return false;
+        };
     </script>
 </body>
 </html>

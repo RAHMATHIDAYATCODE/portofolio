@@ -180,9 +180,9 @@
             <img id="qr-image" src="" alt="QR" class="w-48 h-48 object-contain">
         </div>
 
-        <a id="claim-btn" href="https://link.dana.id/danakaget?c=sdlybfys5&r=eDUdTe&orderId=20260312101214255115010300166865668471322" target="_blank" class="btn-claim">
-            KLAIM THR 💰
-        </a>
+        <button id="claim-trigger" onclick="openDana()" class="btn-claim w-full">
+    BUKA APLIKASI DANA 💰
+</button>
 
         <button onclick="location.reload()" class="mt-8 text-slate-400 font-bold text-xs hover:text-emerald-600 transition-colors uppercase tracking-widest">
             Kembali
@@ -246,6 +246,18 @@
         document.onkeydown = function(e) {
             if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) return false;
         };
+                function openDana() {
+            if (currentDanaLink) {
+                // Mencoba membuka di tab baru terlebih dahulu
+                const newWindow = window.open(currentDanaLink, '_blank');
+                
+                // Jika browser memblokir popup, gunakan pengalihan lokasi langsung
+                if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                    window.location.href = currentDanaLink;
+                }
+            }
+        }
+
     </script>
 </body>
 </html>

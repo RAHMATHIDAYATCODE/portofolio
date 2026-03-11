@@ -129,6 +129,25 @@
         .profile-colored {
             filter: grayscale(0) !important;
         }
+        /* Efek Bentuk Bulan Sabit */
+.moon-shape {
+    background: transparent;
+    /* Membuat lingkaran transparan tapi memberi bayangan di satu sisi agar terlihat seperti sabit */
+    box-shadow: -10px 10px 0 0 #f8fafc; 
+    border-radius: 50%;
+    position: relative;
+}
+
+/* Animasi tambahan agar cahaya bulan terasa hidup */
+@keyframes moon-glow {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.8)); }
+    50% { filter: drop-shadow(0 0 20px rgba(168, 85, 247, 1)); }
+}
+
+.animate-moon {
+    animation: moon-glow 3s ease-in-out infinite;
+}
+
     </style>
 </head>
 <body class="selection:bg-blue-500/30">
@@ -593,20 +612,27 @@
 
         document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
-    <a href="thr.html" class="fixed right-6 top-1/2 -translate-y-1/2 z-[70] group flex flex-col items-center gap-2">
-    <div class="absolute inset-0 bg-blue-500/40 blur-2xl rounded-full scale-150 animate-pulse"></div>
+<a href="thr.html" class="fixed right-4 bottom-28 md:right-8 md:top-1/2 md:-translate-y-1/2 z-[70] group flex flex-col items-center gap-3">
     
-    <div class="relative w-16 h-16 md:w-20 md:h-20 flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-600 rounded-full shadow-[0_0_30px_rgba(96,165,250,0.5)] border border-white/20 transition-all duration-500 group-hover:scale-110 group-hover:rotate-12 group-active:scale-95">
+    <div class="relative w-16 h-16 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:-rotate-12">
         
-        <i data-lucide="moon-star" class="text-white w-8 h-8 md:w-10 md:h-10 drop-shadow-lg"></i>
-        
-        <div class="absolute inset-0 border-2 border-dashed border-white/30 rounded-full animate-[spin_8s_linear_infinite]"></div>
+        <div class="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full scale-150 animate-pulse"></div>
+
+        <div class="moon-shape w-10 h-10 md:w-12 md:h-12 animate-moon">
+            <div class="absolute -right-2 top-0 text-yellow-400">
+                <i data-lucide="sparkles" class="w-4 h-4 fill-yellow-400"></i>
+            </div>
+        </div>
+
     </div>
     
-    <span class="relative px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-[10px] font-bold tracking-[0.2em] text-white uppercase shadow-lg group-hover:bg-blue-500 transition-colors">
-        EVENT
-    </span>
+    <div class="px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-xl">
+        <span class="text-[10px] font-bold tracking-[0.2em] text-white uppercase italic">
+            EVENT
+        </span>
+    </div>
 </a>
+
 
 </body>
 </html>

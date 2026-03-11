@@ -166,7 +166,6 @@
             <img id="qr-image" src="" alt="QR" class="w-48 h-48 object-contain">
         </div>
 
-        <!-- Tombol ini memicu fungsi handleDanaClaim agar tidak error kendala -->
         <button onclick="handleDanaClaim()" class="btn-claim">
             BUKA APLIKASI DANA 💰
         </button>
@@ -179,11 +178,9 @@
     <div id="message-box"></div>
 
     <script>
-        // --- DATA KONFIGURASI ---
         const waNumber = "6287864905121";
         const waMessage = "✨Assalamu'alaikum Owner😊, Selamat Idul Fitri..Maafin gua ya kalo ada salah..., Heheh boleh minta Kode Redem nya Abang Rahmat?✨🙏";
 
-        // Daftar kode dan link dana kaget
         const redeemData = {
             "THR-7712": "https://link.dana.id/danakaget?c=sdlybfys5&r=eDUdTe&orderId=20260312101214255115010300166865668471322",
             "THR-1212": "https://link.dana.id/danakaget?c=sdlybfys5&r=eDUdTe&orderId=20260312101214255115010300166865668471322"
@@ -191,7 +188,6 @@
 
         let activeLink = "";
 
-        // --- FUNGSI NAVIGASI ---
         function goToRedeem() {
             document.getElementById('welcome-screen').classList.add('hidden-section');
             document.getElementById('redeem-screen').classList.remove('hidden-section');
@@ -201,19 +197,14 @@
             window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`, '_blank');
         }
 
-        // --- FUNGSI PROSES VERIFIKASI ---
         function processVerify() {
             const inputElement = document.getElementById('redeem-input');
             const codeInput = inputElement.value.trim().toUpperCase();
             
             if (redeemData[codeInput]) {
                 activeLink = redeemData[codeInput];
-                
-                // Set Gambar QR
                 const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(activeLink)}`;
                 document.getElementById('qr-image').src = qrUrl;
-                
-                // Pindah Layar ke Sukses
                 document.getElementById('redeem-screen').classList.add('hidden-section');
                 document.getElementById('qr-screen').classList.remove('hidden-section');
             } else {
@@ -221,18 +212,36 @@
             }
         }
 
-        // --- FUNGSI KLAIM DANA ---
-        // Fungsi ini penting untuk melewati proteksi iFrame/Internal Browser
+        // FUNGSI KHUSUS UNTUK BYPASS KENDALA DANA
         function handleDanaClaim() {
-            if (activeLink) {
-                // Membuka di tab baru (memaksa keluar dari sandbox/bingkai aplikasi)
-                const danaWin = window.open(activeLink, '_blank');
-                
-                // Jika popup diblokir browser, gunakan pengalihan halaman langsung
-                if (!danaWin || danaWin.closed || typeof danaWin.closed == 'undefined') {
-                    window.location.href = activeLink;
-                }
+            if (!activeLink) return;
+
+            showToast("Menghubungkan ke sistem DANA...");
+
+            // 1. Ekstrak data link untuk membuat Android Intent (Sangat Ampuh untuk Android)
+            // Format link asli: https://link.dana.id/danakaget?c=...
+            const urlData = activeLink.split('https://link.dana.id/')[1];
+            const androidIntent = `intent://link.dana.id/${urlData}#Intent;scheme=https;package=id.dana;end`;
+
+            // 2. Cek apakah user menggunakan Mobile
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+            if (isAndroid) {
+                // Untuk Android, paksa pakai Intent. Ini akan langsung membuka aplikasi DANA tanpa melewati browser.
+                window.location.href = androidIntent;
+            } else if (isIOS) {
+                // Untuk iOS, DANA biasanya sudah otomatis mendeteksi link HTTPS DANA sebagai Universal Link.
+                window.location.href = activeLink;
+            } else {
+                // Untuk Desktop/Lainnya
+                window.open(activeLink, '_blank');
             }
+
+            // Backup: Jika dalam 1 detik aplikasi tidak terbuka, arahkan ke link asli
+            setTimeout(() => {
+                window.location.assign(activeLink);
+            }, 1000);
         }
 
         function showToast(text) {
@@ -242,10 +251,8 @@
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
 
-        // --- KEAMANAN ---
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.onkeydown = function(e) {
-            // Mencegah F12 dan Ctrl+Shift+I
             if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) return false;
         };
     </script>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bagi-bagi THR Lebaran</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #064e3b;
+            --primary-light: #10b981;
+            --accent: #fbbf24;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at top right, #065f46, #064e3b);
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f8fafc;
+        }
+
+        .bg-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--primary-light);
+            filter: blur(120px);
+            opacity: 0.2;
+            z-index: -1;
+            border-radius: 50%;
+            animation: move 10s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(-50%, -50%); }
+            to { transform: translate(50%, 50%); }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 420px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+
+        .hidden-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 15px -3px rgba(5, 150, 105, 0.4);
+            cursor: pointer;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(5, 150, 105, 0.4);
+        }
+
+        .btn-claim {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            padding: 18px;
+            border-radius: 16px;
+            font-weight: 800;
+            text-decoration: none;
+            display: block;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(234, 88, 12, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0); }
+        }
+
+        .info-banner {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #92400e;
+            margin-bottom: 20px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qr-wrapper {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 20px;
+            border: 2px solid #e2e8f0;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        #message-box {
+            position: fixed;
+            bottom: 30px;
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            display: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="bg-glow"></div>
+
+    <!-- Tampilan 1: Welcome -->
+    <div id="welcome-screen" class="glass-card">
+        <div class="text-6xl mb-4">🌙</div>
+        <h1 class="text-2xl font-extrabold text-emerald-900 mb-2">Selamat Idul Fitri</h1>
+        <p class="text-slate-500 mb-8 leading-relaxed">Minal Aidin Wal Faizin.<br>Mohon Maaf Lahir dan Batin.</p>
+        
+        <div class="info-banner">
+            <span class="text-xl">ℹ️</span>
+            <p>Pastikan aplikasi <b>DANA</b> sudah terinstal di perangkat Anda sebelum mengambil hadiah.</p>
+        </div>
+
+        <button onclick="nextStep('welcome-screen', 'redeem-screen')" class="btn-gradient w-full text-lg">
+            BUKA AMPLOP 🧧
+        </button>
+    </div>
+
+    <!-- Tampilan 2: Redeem -->
+    <div id="redeem-screen" class="glass-card hidden-section">
+        <h2 class="text-xl font-bold text-emerald-900 mb-6">Verifikasi Kode Redem</h2>
+        
+        <input type="text" id="redeem-input" placeholder="INPUT KODE REDEM" 
+               class="w-full bg-slate-100 border-2 border-transparent focus:border-emerald-500 rounded-2xl px-4 py-4 mb-4 outline-none text-center font-extrabold tracking-widest text-xl text-emerald-900 transition-all">
+        
+        <button onclick="checkCode()" class="btn-gradient w-full mb-6">
+            VERIFIKASI
+        </button>
+
+        <p class="text-xs text-slate-400 mb-2">Belum punya kode?</p>
+        <a id="wa-button" href="#" target="_blank" class="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-full font-bold text-sm transition-transform hover:scale-105 shadow-md">
+            MINTA KODE KE OWNER
+        </a>
+    </div>
+
+    <!-- Tampilan 3: Success -->
+    <div id="qr-screen" class="glass-card hidden-section">
+        <div class="text-4xl mb-2">🎊</div>
+        <h2 class="text-2xl font-extrabold text-emerald-900 mb-2">BERHASIL TERBUKA!</h2>
+        <p class="text-sm text-slate-500 mb-6">SILAHKAN AMBIL SALDO DANA ANDA DI BAWAH.</p>
+        
+        <div class="qr-wrapper">
+            <img id="qr-image" src="" alt="QR" class="w-48 h-48 object-contain">
+        </div>
+
+        <a id="claim-btn" href="#" target="_blank" class="btn-claim">
+            KLAIM THR 💰
+        </a>
+
+        <button onclick="location.reload()" class="mt-8 text-slate-400 font-bold text-xs hover:text-emerald-600 transition-colors uppercase tracking-widest">
+            Kembali
+        </button>
+    </div>
+
+    <div id="message-box"></div>
+
+    <script>
+        // Konfigurasi WhatsApp
+        const waNumber = "6287864905121";
+        const waMessage = encodeURIComponent("✨Assalamu'alaikum Owner😊, Selamat Idul Fitri..Maafin gua ya kalo ada salah..., Sehat dan Sukses ya.., Heheh boleh minta Kode Redem nya Abang Rahmat?✨🙏");
+        document.getElementById('wa-button').href = `https://wa.me/${waNumber}?text=${waMessage}`;
+
+        const redeemData = {
+            "THR-7712": "https://link.dana.id/danakaget?c=sdlybfys5&r=eDUdTe&orderId=20260312101214255115010300166865668471322",
+            "THR-4590": "https://link.dana.id/kaget/contoh2",
+            "THR-1212": "https://link.dana.id/kaget/contoh3"
+        };
+
+        function nextStep(current, next) {
+            const currEl = document.getElementById(current);
+            const nextEl = document.getElementById(next);
+            
+            currEl.style.opacity = '0';
+            currEl.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                currEl.classList.add('hidden-section');
+                nextEl.classList.remove('hidden-section');
+                setTimeout(() => {
+                    nextEl.style.opacity = '1';
+                    nextEl.style.transform = 'translateY(0)';
+                }, 50);
+            }, 300);
+        }
+
+        function checkCode() {
+            const input = document.getElementById('redeem-input').value.trim().toUpperCase();
+            const qrImg = document.getElementById('qr-image');
+            const claimBtn = document.getElementById('claim-btn');
+            
+            if (redeemData[input]) {
+                const targetUrl = redeemData[input];
+                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&margin=15&ecc=H&data=${encodeURIComponent(targetUrl)}`;
+                claimBtn.href = targetUrl;
+                nextStep('redeem-screen', 'qr-screen');
+            } else {
+                showMessage("❌ Kode salah atau tidak aktif!");
+            }
+        }
+
+        function showMessage(text) {
+            const box = document.getElementById('message-box');
+            box.innerText = text;
+            box.style.display = 'block';
+            setTimeout(() => box.style.display = 'none', 3000);
+        }
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) return false;
+        };
+    </script>
+</body>
+</html>
+

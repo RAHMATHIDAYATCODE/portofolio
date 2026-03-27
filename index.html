@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RHPAY - Solusi Digital Anda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --rhpay-blue: #007bbd;
+            --rhpay-orange: #f39200;
+            --rhpay-teal: #00a19a;
+        }
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            /* Anti-Copy Protection */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #007bbd 0%, #00a19a 100%);
+        }
+        .product-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #e5e7eb;
+        }
+        .product-card:active {
+            transform: scale(0.95);
+            background-color: #f0f9ff;
+            border-color: var(--rhpay-blue);
+        }
+        .tab-active {
+            border-bottom: 4px solid #f39200;
+            color: white;
+            font-weight: 800;
+        }
+        .op-btn-active {
+            background-color: #007bbd !important;
+            color: white !important;
+            border-color: #007bbd !important;
+            box-shadow: 0 4px 12px -2px rgb(0 123 189 / 0.4);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(6px);
+        }
+        .modal.active {
+            display: flex;
+        }
+        @keyframes modalShow {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-modal {
+            animation: modalShow 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="pb-24" oncontextmenu="return false;">
+
+    <!-- Header -->
+    <header class="gradient-bg text-white pt-8 pb-16 px-6 rounded-b-[50px] shadow-xl relative z-10">
+        <div class="flex justify-between items-start mb-8">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <div class="bg-white p-1.5 rounded-lg shadow-inner">
+                        <i class="fas fa-bolt text-[#007bbd] text-xl"></i>
+                    </div>
+                    <h1 class="text-3xl font-black tracking-tighter">RH<span class="text-[#f39200]">PAY</span></h1>
+                </div>
+                <p class="text-[10px] font-bold tracking-[0.2em] opacity-90 uppercase text-white/80">Solusi Digital Anda</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] font-bold uppercase text-[#f39200] leading-none mb-1">Real Murahnya</p>
+                <p class="text-[10px] font-bold uppercase leading-none text-white/80">Real Cepatnya</p>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex bg-black/20 p-1 rounded-2xl relative z-20 backdrop-blur-md">
+            <button onclick="switchTab('pulsa')" id="tab-pulsa" class="flex-1 py-3 text-sm rounded-xl transition-all tab-active">
+                <i class="fas fa-mobile-alt mr-2"></i>PULSA
+            </button>
+            <button onclick="switchTab('ewallet')" id="tab-ewallet" class="flex-1 py-3 text-sm rounded-xl transition-all text-white/70">
+                <i class="fas fa-wallet mr-2"></i>E-WALLET
+            </button>
+        </div>
+    </header>
+
+    <!-- Content Area -->
+    <main class="px-5 relative z-20" style="margin-top: -1.5rem;">
+        
+        <!-- Filter Operator Pulsa -->
+        <div id="section-pulsa">
+            <div class="flex gap-2 overflow-x-auto pb-4 pt-2 no-scrollbar">
+                <button onclick="filterOperator('TELKOMSEL')" class="op-btn bg-white px-6 py-2.5 rounded-xl shadow-md text-xs font-bold border-2 border-transparent transition-all whitespace-nowrap op-btn-active">TELKOMSEL</button>
+                <button onclick="filterOperator('IM3')" class="op-btn bg-white px-6 py-2.5 rounded-xl shadow-md text-xs font-bold border-2 border-transparent transition-all whitespace-nowrap">IM3</button>
+                <button onclick="filterOperator('XL')" class="op-btn bg-white px-6 py-2.5 rounded-xl shadow-md text-xs font-bold border-2 border-transparent transition-all whitespace-nowrap">XL</button>
+                <button onclick="filterOperator('THREE')" class="op-btn bg-white px-6 py-2.5 rounded-xl shadow-md text-xs font-bold border-2 border-transparent transition-all whitespace-nowrap">THREE</button>
+            </div>
+            
+            <div id="list-produk" class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2"></div>
+        </div>
+
+        <!-- Filter Operator E-Wallet -->
+        <div id="section-ewallet" class="hidden">
+            <div class="flex gap-2 overflow-x-auto pb-4 pt-2 no-scrollbar">
+                <button onclick="filterOperator('DANA')" class="op-btn bg-white px-6 py-2.5 rounded-xl shadow-md text-xs font-bold border-2 border-transparent transition-all whitespace-nowrap">DANA</button>
+                <button onclick="filterOperator('OVO')" class="op-btn bg-white px-6 py-2.5 rounded-xl shadow-md text-xs font-bold border-2 border-transparent transition-all whitespace-nowrap">OVO</button>
+                <button onclick="filterOperator('GOPAY')" class="op-btn bg-white px-6 py-2.5 rounded-xl shadow-md text-xs font-bold border-2 border-transparent transition-all whitespace-nowrap">GOPAY</button>
+            </div>
+            <div id="list-ewallet" class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2"></div>
+        </div>
+    </main>
+
+    <!-- Modal Order -->
+    <div id="modal-order" class="modal">
+        <div class="bg-white w-full max-w-sm rounded-[32px] p-6 shadow-2xl animate-modal mx-4">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-shopping-cart text-blue-600 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-black text-gray-800 leading-tight">Konfirmasi Pesanan</h3>
+                <p id="selected-product-name" class="text-blue-600 font-bold mt-1"></p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] ml-1">Nomor Handphone / ID</label>
+                    <input type="tel" id="input-no" placeholder="08XX XXXX XXXX" 
+                        oninput="formatPhoneNumber(this)"
+                        class="w-full mt-1.5 p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-blue-500 focus:bg-white focus:outline-none text-xl font-bold tracking-widest text-center transition-all">
+                </div>
+
+                <div class="bg-amber-50 p-3 rounded-xl flex items-start gap-3 border border-amber-100">
+                    <i class="fas fa-shield-alt text-amber-500 mt-0.5"></i>
+                    <p class="text-[10px] text-amber-700 leading-normal font-medium">Pastikan nomor tujuan sudah benar. Transaksi yang sudah diproses tidak dapat dibatalkan.</p>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button onclick="closeModal()" class="flex-1 py-4 bg-gray-100 text-gray-500 rounded-2xl font-bold active:bg-gray-200 transition-colors">Batal</button>
+                    <button onclick="processToPayment()" class="flex-[2] py-4 bg-[#007bbd] text-white rounded-2xl font-bold shadow-lg shadow-blue-200 active:scale-95 transition-all">YA, BELI SEKARANG</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal QRIS -->
+    <div id="modal-qris" class="modal">
+        <div class="bg-white w-full max-w-sm rounded-[40px] p-8 shadow-2xl text-center animate-modal mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <span class="bg-blue-50 text-blue-600 text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider">Metode QRIS</span>
+                <button onclick="closeQris()" class="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-full text-gray-400 active:bg-gray-100">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mb-6">
+                <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Total Pembayaran</p>
+                <p class="text-4xl font-black text-[#007bbd]" id="qris-price"></p>
+            </div>
+
+            <div class="bg-white p-5 border-4 border-blue-50 rounded-[35px] mb-8 flex flex-col items-center shadow-inner relative group" id="qris-image-container">
+                <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" id="qris-svg" class="w-full h-auto">
+                    <rect width="200" height="200" fill="white"/>
+                    <path d="M20 20h40v40h-40zM140 20h40v40h-40zM20 140h40v40h-40z" fill="black"/>
+                    <rect x="25" y="25" width="30" height="30" fill="white"/>
+                    <rect x="30" y="30" width="20" height="20" fill="black"/>
+                    <rect x="145" y="25" width="30" height="30" fill="white"/>
+                    <rect x="150" y="30" width="20" height="20" fill="black"/>
+                    <rect x="25" y="145" width="30" height="30" fill="white"/>
+                    <rect x="30" y="150" width="20" height="20" fill="black"/>
+                    <path d="M70 70h60v60h-60z" fill="#007bbd"/>
+                    <circle cx="100" cy="100" r="18" fill="white"/>
+                    <path d="M92 100l8-8 8 8-8 8z" fill="#f39200"/>
+                    <text x="100" y="195" font-family="Arial" font-size="9" text-anchor="middle" font-weight="900" fill="#999">SCAN QRIS RHPAY</text>
+                </svg>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="downloadQRIS()" class="w-full py-4 bg-[#00a19a] text-white rounded-2xl font-black flex items-center justify-center gap-3 active:scale-95 transition-all">
+                    <i class="fas fa-save"></i> SIMPAN QR KE GALERI
+                </button>
+                <button onclick="confirmPaid()" class="w-full py-4 bg-[#007bbd] text-white rounded-2xl font-black flex items-center justify-center gap-3 shadow-lg shadow-blue-100 active:scale-95 transition-all">
+                    <i class="fas fa-check-circle"></i> SAYA SUDAH BAYAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Footer -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 shadow-[0_-10px_30px_rgba(0,0,0,0.08)] z-40">
+        <div class="max-w-md mx-auto flex justify-between items-center px-2">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 bg-green-50 rounded-2xl flex items-center justify-center shadow-inner">
+                    <i class="fab fa-whatsapp text-green-500 text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Butuh Bantuan?</p>
+                    <p class="text-base font-black text-gray-800">0878-6490-5121</p>
+                </div>
+            </div>
+            <div class="bg-blue-50 px-4 py-2 rounded-xl">
+                 <p class="text-[10px] font-black italic text-blue-500 tracking-tight">#RHPAY_Mantap</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // PROTEKSI TAMBAHAN: Mencegah Inspect Element melalui keyboard
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123 || 
+               (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0))) || 
+               (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) {
+                return false;
+            }
+        };
+
+        const dataProduk = {
+            pulsa: [
+                // TELKOMSEL
+                { op: 'TELKOMSEL', label: '5K', val: '7.000' },
+                { op: 'TELKOMSEL', label: '10K', val: '12.000' },
+                { op: 'TELKOMSEL', label: '20K', val: '22.000' },
+                { op: 'TELKOMSEL', label: '25K', val: '27.000' },
+                { op: 'TELKOMSEL', label: '30K', val: '32.000' },
+                { op: 'TELKOMSEL', label: '35K', val: '37.000' },
+                { op: 'TELKOMSEL', label: '40K', val: '42.000' },
+                { op: 'TELKOMSEL', label: '45K', val: '47.000' },
+                { op: 'TELKOMSEL', label: '50K', val: '52.000' },
+                { op: 'TELKOMSEL', label: '55K', val: '57.000' },
+                { op: 'TELKOMSEL', label: '60K', val: '62.000' },
+                { op: 'TELKOMSEL', label: '65K', val: '67.000' },
+                { op: 'TELKOMSEL', label: '70K', val: '72.000' },
+                { op: 'TELKOMSEL', label: '75K', val: '77.000' },
+                { op: 'TELKOMSEL', label: '80K', val: '82.000' },
+                { op: 'TELKOMSEL', label: '85K', val: '87.000' },
+                { op: 'TELKOMSEL', label: '90K', val: '92.000' },
+                { op: 'TELKOMSEL', label: '95K', val: '97.000' },
+                { op: 'TELKOMSEL', label: '100K', val: '105.000' },
+                { op: 'TELKOMSEL', label: '150K', val: '155.000' },
+                { op: 'TELKOMSEL', label: '200K', val: '205.000' },
+
+                // IM3
+                { op: 'IM3', label: '5K', val: '8.000' },
+                { op: 'IM3', label: '10K', val: '13.000' },
+                { op: 'IM3', label: '12K', val: '15.000' },
+                { op: 'IM3', label: '20K', val: '23.000' },
+                { op: 'IM3', label: '25K', val: '28.000' },
+                { op: 'IM3', label: '30K', val: '33.000' },
+                { op: 'IM3', label: '40K', val: '43.000' },
+                { op: 'IM3', label: '50K', val: '53.000' },
+                { op: 'IM3', label: '60K', val: '63.000' },
+                { op: 'IM3', label: '80K', val: '83.000' },
+                { op: 'IM3', label: '100K', val: '105.000' },
+
+                // XL
+                { op: 'XL', label: '5K', val: '7.000' },
+                { op: 'XL', label: '10K', val: '12.000' },
+                { op: 'XL', label: '15K', val: '17.000' },
+                { op: 'XL', label: '20K', val: '22.000' },
+                { op: 'XL', label: '25K', val: '27.000' },
+                { op: 'XL', label: '30K', val: '32.000' },
+                { op: 'XL', label: '40K', val: '42.000' },
+                { op: 'XL', label: '50K', val: '52.000' },
+                { op: 'XL', label: '100K', val: '105.000' },
+
+                // THREE
+                { op: 'THREE', label: '5K', val: '7.000' },
+                { op: 'THREE', label: '10K', val: '12.000' },
+                { op: 'THREE', label: '20K', val: '22.000' },
+                { op: 'THREE', label: '25K', val: '27.000' },
+                { op: 'THREE', label: '30K', val: '32.000' },
+                { op: 'THREE', label: '50K', val: '52.000' },
+                { op: 'THREE', label: '75K', val: '77.000' },
+                { op: 'THREE', label: '100K', val: '105.000' }
+            ],
+            ewallet: [
+                // DANA
+                { op: 'DANA', label: 'DANA 20K', val: '22.000' },
+                { op: 'DANA', label: 'DANA 25K', val: '27.000' },
+                { op: 'DANA', label: 'DANA 30K', val: '32.000' },
+                { op: 'DANA', label: 'DANA 35K', val: '37.000' },
+                { op: 'DANA', label: 'DANA 40K', val: '42.000' },
+                { op: 'DANA', label: 'DANA 45K', val: '47.000' },
+                { op: 'DANA', label: 'DANA 50K', val: '52.000' },
+                { op: 'DANA', label: 'DANA 55K', val: '57.000' },
+                { op: 'DANA', label: 'DANA 60K', val: '62.000' },
+                { op: 'DANA', label: 'DANA 65K', val: '67.000' },
+                { op: 'DANA', label: 'DANA 70K', val: '72.000' },
+                { op: 'DANA', label: 'DANA 75K', val: '77.000' },
+                { op: 'DANA', label: 'DANA 80K', val: '82.000' },
+                { op: 'DANA', label: 'DANA 85K', val: '87.000' },
+                { op: 'DANA', label: 'DANA 90K', val: '92.000' },
+                { op: 'DANA', label: 'DANA 95K', val: '97.000' },
+                { op: 'DANA', label: 'DANA 100K', val: '105.000' },
+
+                // OVO
+                { op: 'OVO', label: 'OVO 20K', val: '22.000' },
+                { op: 'OVO', label: 'OVO 25K', val: '27.000' },
+                { op: 'OVO', label: 'OVO 30K', val: '32.000' },
+                { op: 'OVO', label: 'OVO 40K', val: '42.000' },
+                { op: 'OVO', label: 'OVO 50K', val: '52.000' },
+                { op: 'OVO', label: 'OVO 60K', val: '62.000' },
+                { op: 'OVO', label: 'OVO 70K', val: '72.000' },
+                { op: 'OVO', label: 'OVO 80K', val: '82.000' },
+                { op: 'OVO', label: 'OVO 90K', val: '92.000' },
+                { op: 'OVO', label: 'OVO 100K', val: '105.000' },
+
+                // GOPAY
+                { op: 'GOPAY', label: 'GOPAY 10K', val: '12.000' },
+                { op: 'GOPAY', label: 'GOPAY 15K', val: '17.000' },
+                { op: 'GOPAY', label: 'GOPAY 20K', val: '22.000' },
+                { op: 'GOPAY', label: 'GOPAY 25K', val: '27.000' },
+                { op: 'GOPAY', label: 'GOPAY 30K', val: '32.000' },
+                { op: 'GOPAY', label: 'GOPAY 40K', val: '42.000' },
+                { op: 'GOPAY', label: 'GOPAY 50K', val: '52.000' },
+                { op: 'GOPAY', label: 'GOPAY 60K', val: '62.000' },
+                { op: 'GOPAY', label: 'GOPAY 70K', val: '72.000' },
+                { op: 'GOPAY', label: 'GOPAY 80K', val: '82.000' },
+                { op: 'GOPAY', label: 'GOPAY 90K', val: '92.000' },
+                { op: 'GOPAY', label: 'GOPAY 100K', val: '105.000' }
+            ]
+        };
+
+        let currentCategory = 'pulsa';
+        let currentOrder = null;
+
+        function formatPhoneNumber(input) {
+            let value = input.value.replace(/\D/g, ''); 
+            let formattedValue = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) { formattedValue += ' '; }
+                formattedValue += value[i];
+            }
+            input.value = formattedValue.trim();
+        }
+
+        function switchTab(tab) {
+            currentCategory = tab;
+            document.getElementById('section-pulsa').classList.toggle('hidden', tab !== 'pulsa');
+            document.getElementById('section-ewallet').classList.toggle('hidden', tab !== 'ewallet');
+            
+            const tPulsa = document.getElementById('tab-pulsa');
+            const tEwallet = document.getElementById('tab-ewallet');
+            
+            if(tab === 'pulsa') {
+                tPulsa.className = "flex-1 py-3 text-sm rounded-xl transition-all tab-active";
+                tEwallet.className = "flex-1 py-3 text-sm rounded-xl transition-all text-white/70";
+                filterOperator('TELKOMSEL'); // Default filter pulsa
+            } else {
+                tEwallet.className = "flex-1 py-3 text-sm rounded-xl transition-all tab-active";
+                tPulsa.className = "flex-1 py-3 text-sm rounded-xl transition-all text-white/70";
+                filterOperator('DANA'); // Default filter ewallet
+            }
+        }
+
+        function renderProducts(opFilter) {
+            const listId = currentCategory === 'pulsa' ? 'list-produk' : 'list-ewallet';
+            const container = document.getElementById(listId);
+            container.innerHTML = '';
+
+            let items = dataProduk[currentCategory];
+            if(opFilter) { items = items.filter(i => i.op === opFilter); }
+
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "bg-white p-4 rounded-3xl shadow-sm product-card cursor-pointer";
+                div.onclick = () => openModal(item);
+                div.innerHTML = `
+                    <div class="flex justify-between items-start mb-1">
+                         <p class="text-[8px] font-black text-blue-500/50 uppercase tracking-widest">${item.op}</p>
+                         <i class="fas fa-circle-check text-gray-100 text-[10px]"></i>
+                    </div>
+                    <p class="text-base font-black text-gray-800">${item.label}</p>
+                    <div class="mt-3 pt-2 border-t border-gray-50">
+                        <p class="text-[9px] text-gray-400 font-bold uppercase mb-0.5">Harga</p>
+                        <p class="text-blue-600 font-black text-sm">Rp ${item.val}</p>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function filterOperator(op) {
+            renderProducts(op);
+            const buttons = document.querySelectorAll('.op-btn');
+            buttons.forEach(b => {
+                if(b.innerText === op) { b.classList.add('op-btn-active'); } 
+                else { b.classList.remove('op-btn-active'); }
+            });
+        }
+
+        function openModal(item) {
+            currentOrder = item;
+            document.getElementById('selected-product-name').innerText = `${item.op} - ${item.label}`;
+            document.getElementById('modal-order').classList.add('active');
+            setTimeout(() => document.getElementById('input-no').focus(), 150);
+        }
+
+        function closeModal() {
+            document.getElementById('modal-order').classList.remove('active');
+            document.getElementById('input-no').value = '';
+        }
+
+        function processToPayment() {
+            const noDisplay = document.getElementById('input-no').value;
+            const noClean = noDisplay.replace(/\s/g, ''); 
+            
+            if(noClean.length < 5) {
+                const input = document.getElementById('input-no');
+                input.classList.add('border-red-500');
+                input.placeholder = "WAJIB ISI NOMOR!";
+                setTimeout(() => {
+                    input.classList.remove('border-red-500');
+                    input.placeholder = "08XX XXXX XXXX";
+                }, 1500);
+                return;
+            }
+            
+            currentOrder.target = noClean;
+            document.getElementById('qris-price').innerText = `Rp ${currentOrder.val}`;
+            document.getElementById('modal-order').classList.remove('active');
+            document.getElementById('modal-qris').classList.add('active');
+        }
+
+        function closeQris() {
+            document.getElementById('modal-qris').classList.remove('active');
+        }
+
+        function downloadQRIS() {
+            const svg = document.getElementById('qris-svg');
+            const svgData = new XMLSerializer().serializeToString(svg);
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.onload = function() {
+                canvas.width = 600; canvas.height = 600;
+                ctx.fillStyle = "white"; ctx.fillRect(0,0,600,600);
+                ctx.drawImage(img, 50, 50, 500, 500);
+                const pngFile = canvas.toDataURL("image/png");
+                const downloadLink = document.createElement("a");
+                downloadLink.href = pngFile;
+                downloadLink.download = `QRIS-RHPAY-${currentOrder.op}-${currentOrder.label}.png`;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            };
+            img.src = "data:image/svg+xml;base64," + btoa(svgData);
+        }
+
+        function confirmPaid() {
+            const waNumber = "6287864905121";
+            let formattedTarget = currentOrder.target.replace(/(\d{4})(?=\d)/g, '$1-');
+            const message = `Halo Admin RHPAY! 👋\n\nSaya sudah melakukan pembayaran via QRIS.\n\nDetail Pesanan:\n📌 Produk: ${currentOrder.op} ${currentOrder.label}\n💰 Nominal: Rp ${currentOrder.val}\n📱 No. Tujuan: ${formattedTarget}\n\nMohon segera diproses ya, terima kasih!`;
+            window.location.href = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+        }
+
+        window.onload = () => { 
+            filterOperator('TELKOMSEL'); // Inisialisasi awal
+        };
+    </script>
+</body>
+</html>

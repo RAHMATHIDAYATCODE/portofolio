@@ -179,21 +179,10 @@
                 <p class="text-4xl font-black text-[#007bbd]" id="qris-price"></p>
             </div>
 
-            <div class="bg-white p-5 border-4 border-blue-50 rounded-[35px] mb-8 flex flex-col items-center shadow-inner relative group" id="qris-image-container">
-                <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" id="qris-svg" class="w-full h-auto">
-                    <rect width="200" height="200" fill="white"/>
-                    <path d="M20 20h40v40h-40zM140 20h40v40h-40zM20 140h40v40h-40z" fill="black"/>
-                    <rect x="25" y="25" width="30" height="30" fill="white"/>
-                    <rect x="30" y="30" width="20" height="20" fill="black"/>
-                    <rect x="145" y="25" width="30" height="30" fill="white"/>
-                    <rect x="150" y="30" width="20" height="20" fill="black"/>
-                    <rect x="25" y="145" width="30" height="30" fill="white"/>
-                    <rect x="30" y="150" width="20" height="20" fill="black"/>
-                    <path d="M70 70h60v60h-60z" fill="#007bbd"/>
-                    <circle cx="100" cy="100" r="18" fill="white"/>
-                    <path d="M92 100l8-8 8 8-8 8z" fill="#f39200"/>
-                    <text x="100" y="195" font-family="Arial" font-size="9" text-anchor="middle" font-weight="900" fill="#999">SCAN QRIS RHPAY</text>
-                </svg>
+             <div class="bg-white p-4 border-4 border-blue-50 rounded-[35px] mb-6 shadow-inner overflow-hidden">
+                <!-- Jika Anda punya link gambar QRIS, ganti seluruh isi <div> ini dengan <img src="URL_QRIS_ANDA"> -->
+                <img id="qris-img" src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=RHPAY_PAYMENT_DUMMY" alt="QRIS RHPAY" class="w-full aspect-square object-contain rounded-xl">
+                <p class="text-[9px] font-bold text-gray-300 mt-3 tracking-[0.3em] uppercase">SCAN QRIS RHPAY</p>
             </div>
 
             <div class="space-y-3">
